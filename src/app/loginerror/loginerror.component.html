@@ -1,0 +1,20 @@
+<p style="padding-left: 80px; padding-top: 20px; color:darkred">Either the email or the password are incorrect.</p>
+<div class="container">
+  <div class="row">
+      <div class="col-md-12">
+          <form [formGroup] = "loginForm">
+              <div class="form-group">
+                  <label class="col-form-label" for="username">Email</label>
+                  <input type="text" [ngClass] ="Email.invalid && Email.touched ? 'form-control is-invalid' : 'form-control'" placeholder="" id="userame" formControlName = "Email">
+                  <div *ngIf ="Email.invalid && Email.touched" class="invalid-feedback">Questo campo è richiesto.</div>
+              </div>
+              <div class="form-group">
+                  <label class="col-form-label" for="Password">Password</label>
+                  <input type="Password"  [ngClass] ="Password.invalid && Password.touched ? 'form-control is-invalid' : 'form-control'" placeholder="" id="Password" formControlName = "Password">
+                  <div *ngIf="Password.invalid && Password.touched" class="invalid-feedback">Questo campo è richiesto.</div>
+              </div>
+              <button type="button" [disabled] = "loginForm.invalid" class="btn btn-outline-primary" (click) = "onSubmit()" >Login</button>
+          </form>
+      </div>
+  </div>
+</div>
