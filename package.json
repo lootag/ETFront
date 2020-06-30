@@ -25,6 +25,8 @@
     "@ng-bootstrap/ng-bootstrap": "^6.1.0",
     "angular-datatables": "^9.0.2",
     "bootstrap": "^4.4.0",
+    "bootswatch": "^4.5.0",
+    "firebase": "^7.13.1",
     "jquery": "^3.5.1",
     "ng-multiselect-dropdown": "^0.2.10",
     "ng2-smart-table": "^1.6.0",
@@ -33,8 +35,7 @@
     "rxjs": "~6.5.4",
     "tail.select": "^0.5.15",
     "tslib": "^2.0.0",
-    "zone.js": "~0.10.2",
-    "firebase": "^7.13.1"
+    "zone.js": "~0.10.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.1000.0",
