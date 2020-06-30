@@ -63,8 +63,11 @@
                                 </ng-multiselect-dropdown>
                             </div>
                         </div>
-                        <div style="padding-top: 200px;">
+                        <div style="padding-top: 70px;">
                         <button type="button" [disabled] = "searchForm.invalid" class="btn btn-outline-primary" (click) = "onSubmit()">Search</button>
+                        </div>
+                        <div *ngIf = "dropdownListCiks.length == 0">
+                          <p>the length is 0</p>
                         </div>
                     </form>
                 </div>

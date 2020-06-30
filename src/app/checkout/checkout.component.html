@@ -1,1 +1,19 @@
-
+<div *ngIf = "data.length > 0" style="padding-top: 40px;">
+  <div style="padding-left: 15px;">
+    <h4>Search results:</h4>
+  </div>
+  <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+  <div style="padding-top: 40px; padding-left: 10px;">
+    <button type="button" class="btn btn-outline-primary" (click) = "onSubmit()">Download to device</button>
+  </div>
+</div>
+<div *ngIf = "data.length == 0" style="padding-top: 40px;">
+  <div class="jumbotron">
+    <h1 class="display-3">Unfortunately your query hasn't produced any results.</h1>
+    <p class="lead">Click the button down below to begin a new search.</p>
+    <hr class="my-4">
+    <p class="lead">
+      <a class="btn btn-primary btn-lg" routerLink = "/search" role="button">Begin new search</a>
+    </p>
+  </div>
+</div>

@@ -15,6 +15,7 @@ export class LoginErrorComponent implements OnInit {
   constructor(private fb: FormBuilder ,private ls: LoginService, private router: Router) { }
 
   ngOnInit(){
+
     this.loginForm = this.fb.group({
       Email: ['', [
         Validators.required
@@ -36,18 +37,19 @@ export class LoginErrorComponent implements OnInit {
   onSubmit(){
 
     this.ls.request(this.loginForm.value).subscribe(
-      response => localStorage.setItem("access_token", response.access_Token),
-      error => console.error("There was an error", error)
+      response =>
+      {
+        localStorage.setItem("access_token", response.access_Token);
+        this.router.navigate(["search"]);
+      },
+      error =>
+      {
+        this.router.navigate(["search"]);
+      }
+
     );
-    if(localStorage.getItem("access_token") != null)
-    {
-      console.log(localStorage.getItem("access_token"));
-      this.router.navigate(["search"]);
-    }
-    else
-    {
-      this.router.navigate(["loginerror"]);
-    }
+    localStorage.setItem("loginAttempted", "");
+    this.router.navigate(["loader"]);
 
   }
 

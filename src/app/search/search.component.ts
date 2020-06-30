@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { SearchService } from '../search.service';
 import { CikService } from '../cik.service';
 import { FilingRequest } from './FilingRequest';
 import { Router } from '@angular/router';
+import { FilingResponse } from '../FilingResponse';
+import { timer } from 'rxjs';
 
 
 declare var $: any;
@@ -13,7 +15,7 @@ declare var $: any;
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   constructor(private fb: FormBuilder, private ss: SearchService, private ciks: CikService, private router: Router) { }
   dropdownList: Array<any> = [];
@@ -21,33 +23,60 @@ export class SearchComponent implements OnInit {
   dropdownSettings: any = {};
   dropdownListCiks: Array<any> = [];
   selectedItemsCiks: Array<any> = [];
+  filingsResponse: Array<FilingResponse> = [];
   ngOnInit()
   {
-    if(localStorage.getItem("access_token") == null)
+
+
+    if(localStorage.getItem("loginAttempted") != null && localStorage.getItem("access_token") == null)
     {
+      console.log("invalid credentials");
+      this.router.navigate(["loginerror"]);
+    }
+    if(localStorage.getItem("loginAttempted") == null)
+    {
+      console.log("you haven't logged in");
       this.router.navigate(["login"]);
     }
-    let ciksRequested: Array<any> = [];
-    this.ciks.request().subscribe(res => localStorage.setItem("ciks", JSON.stringify(res.ciks)));
-    var myCiks = JSON.parse(localStorage.getItem("ciks"));
-    localStorage.removeItem("ciks");
-    for(var i = 0; i < myCiks.length; i++)
+    console.log("The access token is " + localStorage.getItem("access_token"));
+    if(localStorage.getItem("access_token") != null)
     {
-      ciksRequested.push({item_id: i+1, item_text: myCiks[i]})
-    }
-    this.dropdownList = [
-    ];
-    this.dropdownSettings= {
-      singleSelection: false,
-      idField: 'item_id',
-      textField: 'item_text',
-      selectAllText: 'Select All',
-      unSelectAllText: 'UnSelect All',
-      itemsShowLimit: 1000,
-      allowSearchFilter: true
-    };
+      let ciksRequested: Array<any> = [];
+      this.ciks.request().subscribe
+      (
+        res =>
+        {
+          localStorage.setItem("ciks", JSON.stringify(res.ciks));
+        },
+        err =>
+        {
+          location.reload();
+        }
+      )
 
-    this.dropdownListCiks = ciksRequested;
+      var myCiks = JSON.parse(localStorage.getItem("ciks"));
+      localStorage.removeItem("ciks");
+      for(var i = 0; i < myCiks.length; i++)
+      {
+        ciksRequested.push({item_id: i+1, item_text: myCiks[i]})
+      }
+      this.dropdownList = [
+      ];
+      this.dropdownSettings= {
+        singleSelection: false,
+        idField: 'item_id',
+        textField: 'item_text',
+        selectAllText: 'Select All',
+        unSelectAllText: 'UnSelect All',
+        itemsShowLimit: 1000,
+        allowSearchFilter: true
+      };
+
+
+      this.dropdownListCiks = ciksRequested;
+    }
+
+
     this.searchForm = this.fb.group({
       CIKS: ['', [
         Validators.required
@@ -176,6 +205,8 @@ export class SearchComponent implements OnInit {
   def14Items: string[] = [];
 
 
+
+
   TenKChange(e: boolean) : void
   {
     this.tenKChecked = !this.tenKChecked;
@@ -296,6 +327,13 @@ export class SearchComponent implements OnInit {
 
   onSubmit()
   {
+    let itemsMap = new Map();
+    let allItems: Array<string> = this.tenKItems.concat(["Full10K"]).concat(this.eightKItems).concat(["Full8K"]);
+    for(var i = 0; i < allItems.length; i++)
+    {
+      itemsMap.set(allItems[i], i);
+    }
+    console.log(itemsMap);
     let filingRequest: FilingRequest = new FilingRequest();
     let ciksList =  this.searchForm.get("CIKS").value;
     filingRequest.CIKS = [];
@@ -326,9 +364,69 @@ export class SearchComponent implements OnInit {
         filingRequest.Filings.push(2);
       }
     }
-    filingRequest.Items = [0];
-    let itemsList = this.Items.value;
-    this.router.navigate(["checkout"]);
+    let itemsList: Array<string> = [];
+    for(var i = 0; i < this.Items.value.length; i++)
+    {
+      itemsList.push(this.Items.value[i].item_text);
+    }
+    filingRequest.Items = [];
+    if(this.arrayIncludes(itemsList, this.tenKItems))
+    {
+
+      console.log("There's all 10K items");
+      filingRequest.Items.push(itemsMap.get("Full10K"));
+      itemsList = itemsList.filter(item => !this.tenKItems.includes(item));
+    }
+    if(this.arrayIncludes(itemsList, this.eightKItems))
+    {
+      console.log("There's all 8K items");
+      filingRequest.Items.push(itemsMap.get("Full8K"));
+      itemsList = itemsList.filter(item => !this.eightKItems.includes(item));
+    }
+    for(var i = 0; i < itemsList.length; i ++)
+    {
+      filingRequest.Items.push(itemsMap.get(itemsList[i]));
+    }
+
+    console.log(itemsList);
+    console.log(filingRequest);
+    console.log(this.Items.value);
+    this.ss.request(filingRequest).subscribe
+    (
+      data =>
+      {
+        this.filingsResponse = data.filings;
+        this.ss.setData(this.filingsResponse);
+        console.log(this.filingsResponse);
+        this.router.navigate(["checkout"]);
+      },
+      err =>
+      {
+        this.router.navigate(["nofilings"]);
+      }
+    );
+
+    this.router.navigate(["loader"]);
+
   }
 
+  arrayIncludes(a: Array<any>, b: Array<any>): boolean
+  {
+    for(var i = 0; i < b.length; i++)
+    {
+      if(!a.includes(b[i]))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  ngOnDestroy()
+  {
+
+  }
+
+
 }
+

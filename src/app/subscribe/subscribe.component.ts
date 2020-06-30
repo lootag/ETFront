@@ -9,7 +9,9 @@ export class SubscribeComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit(): void
+  {
+    localStorage.removeItem("access_token");
   }
 
 }

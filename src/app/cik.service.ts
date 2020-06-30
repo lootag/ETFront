@@ -11,7 +11,7 @@ export class CikService {
   request()
   {
     var headersObject = new HttpHeaders().set("Authorization", "Bearer " + localStorage.getItem("access_token"));
-    return this._http.post<any>(this.url, null, {headers: headersObject});
+    return this._http.get<any>(this.url, {headers: headersObject});
   }
 
 }
