@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { IPayPalConfig, ICreateOrderRequest } from 'ngx-paypal';
 
 @Component({
   selector: 'app-subscribe',
@@ -14,4 +15,7 @@ export class SubscribeComponent implements OnInit {
     localStorage.removeItem("access_token");
   }
 
+  
 }
+
+

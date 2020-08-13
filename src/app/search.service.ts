@@ -10,7 +10,7 @@ export class SearchService {
 
   private apiData = new BehaviorSubject<Array<FilingResponse>>(new Array<FilingResponse>());
   public apiData$ = this.apiData.asObservable();
-  private url: string = 'https://edgartools.azurewebsites.net/api/search';
+  private url: string = 'https://edgartools2.azurewebsites.net/api/search';
   constructor(private _http: HttpClient) { }
 
 

@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 
 export class LoginService {
 
-  private url: string = 'https://edgartools.azurewebsites.net/api/login';
+  private url: string = 'https://edgartools2.azurewebsites.net/api/login';
   constructor(private _http: HttpClient) { }
 
   request(userData)

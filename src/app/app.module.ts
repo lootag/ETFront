@@ -16,6 +16,9 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { LoaderComponent } from './loader/loader.component';
 import { ThanksComponent } from './thanks/thanks.component';
 import { NofilingsComponent } from './nofilings/nofilings.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+import { NgxPayPalModule } from 'ngx-paypal';
 
 
 
@@ -40,6 +43,8 @@ import { NofilingsComponent } from './nofilings/nofilings.component';
     NgMultiSelectDropDownModule.forRoot(),
     NgbModule,
     Ng2SmartTableModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    NgxPayPalModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -7,11 +7,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class CikService {
 
   constructor(private _http: HttpClient) { }
-  private url: string = "https://edgartools.azurewebsites.net/api/getCiks"
+  private url: string = "https://edgartools2.azurewebsites.net/api/getCiks"
   request()
   {
-    var headersObject = new HttpHeaders().set("Authorization", "Bearer " + localStorage.getItem("access_token"));
-    return this._http.get<any>(this.url, {headers: headersObject});
+    return this._http.get<any>(this.url);
   }
 
 }

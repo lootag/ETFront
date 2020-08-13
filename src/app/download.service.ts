@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 })
 export class DownloadService {
 
-  private url: string = 'https://edgartools.azurewebsites.net/api/download';
+  private url: string = 'https://edgartools2.azurewebsites.net/api/download';
   constructor(private _http: HttpClient, private router: Router) { }
 
   downloadFile(filename: string = null, userData): void
